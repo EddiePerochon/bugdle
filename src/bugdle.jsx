@@ -4246,11 +4246,17 @@ function Bugdle() {
     }
   }
   const effectiveIdx = Math.max(deepestIdx, revealedRankIdx);
-  // Clade info: the deepest shared clade name. We don't include Insecta (depth 0)
-  // since the LCA only becomes meaningful after the first guess that goes deeper.
-  // The Genus and Species ranks are excluded because revealing them would give
-  // away the answer.
-  const lcaCladeName = (guesses.length > 0 && deepestIdx > 0 && tp[deepestIdx]) ? tp[deepestIdx][1] : null;
+  // Clade info: the deepest shared clade name, BUT never the species itself —
+  // if the player has identified the answer (or a hint pushed effectiveIdx to
+  // Species level), clamp down to Genus so the panel shows the genus Wikipedia
+  // page instead of the species page. We do NOT use Species for the panel
+  // because that would leak the answer mid-game, and even post-game it's nicer
+  // to anchor on the genus (which often has the better Wikipedia article).
+  //
+  // tp[tp.length-1] = Species, tp[tp.length-2] = Genus. So we cap deepestIdx at
+  // tp.length-2.
+  const cladeIdxForPanel = Math.min(deepestIdx, tp.length - 2);
+  const lcaCladeName = (guesses.length > 0 && cladeIdxForPanel > 0 && tp[cladeIdxForPanel]) ? tp[cladeIdxForPanel][1] : null;
 
   // Reset clade selection to the latest LCA whenever a new guess is added.
   // Tracking guesses.length is sufficient — the LCA is always recomputed above
@@ -4500,7 +4506,20 @@ function Bugdle() {
                 won={won}
                 revealedRankIdx={revealedRankIdx}
                 mysteryRevealed={mysteryRevealed}
-                onGuessClick={(id) => { setActiveGuessId(id); sounds.click(); }}
+                onGuessClick={(id) => {
+                  setActiveGuessId(id);
+                  sounds.click();
+                  // Clicking a leaf species in the tree should switch the Clade Info
+                  // panel to its Genus (never the Species itself — by design). We look
+                  // up the matching species by id; the mystery leaf (id === target.id
+                  // post-reveal) also lands on its genus, which is the desired
+                  // behaviour when the player has just won.
+                  const sp = SPECIES.find((s) => s.id === id);
+                  if (sp) {
+                    if (!cladeInfoOpen) toggleCladeInfo();
+                    setSelectedClade(sp.genus);
+                  }
+                }}
                 activeGuessId={activeGuessId}
                 onCladeClick={(cladeName) => {
                   // When the user clicks an internal clade node in the tree, open
