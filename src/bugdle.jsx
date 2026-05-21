@@ -3180,6 +3180,35 @@ async function fetchWikipediaSummary(clade, lang) {
   if (!clade) return null;
   const cacheKey = `${lang}:${clade}`;
   if (_wikiCache.has(cacheKey)) return _wikiCache.get(cacheKey);
+
+  // Keywords that indicate the Wikipedia article actually concerns insects,
+  // arthropods, or taxonomy. At least ONE must appear in the extract (case-
+  // insensitive). This guards against disambiguation redirects that land on
+  // unrelated pages (e.g. "Titanus" → Roman mythology, a singer, etc.).
+  const ENTOMO_KEYWORDS = [
+    // taxonomy
+    'insect','beetle','moth','butterfly','fly','ant','bee','wasp','bug','cricket',
+    'grasshopper','mantis','termite','dragonfly','damselfly','flea','louse','tick',
+    'spider','mite','arachnid','arthropod','larva','larvae','pupa','chrysalis',
+    'nymph','imago','exoskeleton','metamorphosis','instar',
+    // systematic terms
+    'family','genus','species','order','subfamily','tribe','clade','taxon',
+    'entomol','lepidoptera','coleoptera','diptera','hymenoptera','hemiptera',
+    'orthoptera','odonata','blattodea','mantodea','phasmida','neuroptera',
+    'trichoptera','ephemeroptera','plecoptera','dermaptera','strepsiptera',
+    // french equivalents
+    'insecte','coléoptère','papillon','mouche','fourmi','abeille','guêpe',
+    'punaise','grillon','sauterelle','mante','termite','libellule','puce',
+    'pou','arthropode','larve','nymphe','chrysalide','métamorphose',
+    'espèce','genre','famille','ordre','clade','entomol',
+  ];
+
+  const isEntomological = (extract) => {
+    if (!extract) return false;
+    const lower = extract.toLowerCase();
+    return ENTOMO_KEYWORDS.some((kw) => lower.includes(kw));
+  };
+
   const tryFetch = async (title, langCode) => {
     try {
       const url = `https://${langCode}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
@@ -3187,9 +3216,9 @@ async function fetchWikipediaSummary(clade, lang) {
       if (!r.ok) return null;
       const data = await r.json();
       if (data.type === 'disambiguation') return null;
-      // Wikipedia returns "Not found" type entries with extract = '' or a stub. Treat
-      // empty extracts as "no data".
       if (!data.extract || data.extract.length < 20) return null;
+      // Reject articles that don't mention entomological context at all.
+      if (!isEntomological(data.extract)) return null;
       return {
         title: data.title || title,
         extract: data.extract,
