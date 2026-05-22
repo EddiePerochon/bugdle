@@ -134,6 +134,7 @@ const STRINGS = {
     exact_match: 'Exact match',
     partial_match: 'Partially correct',
     no_match: 'No match',
+    close_match: 'Close',
     // Hint values
     smaller: 'Smaller',
     larger: 'Larger',
@@ -183,6 +184,8 @@ const STRINGS = {
     htp_start_h: 'A good start',
     htp_start_p: 'Start with a species you know well. The fewer guesses you need, the more achievements you unlock.',
     htp_lang_note: '',
+    htp_credits_h: 'Inspired by',
+    htp_credits_p: 'Bugdle was inspired by',
     // Clade information panel
     clade_info_title: 'Clade Information',
     clade_info_toggle_show: 'Show clade information',
@@ -263,6 +266,7 @@ const STRINGS = {
     exact_match: 'Correspondance exacte',
     partial_match: 'Partiellement correct',
     no_match: 'Aucune correspondance',
+    close_match: 'Proche',
     smaller: 'Plus petit',
     larger: 'Plus grand',
     trades: 'Échanges',
@@ -307,6 +311,8 @@ const STRINGS = {
     htp_start_h: 'Un bon départ',
     htp_start_p: "Commencez par une espèce que vous connaissez bien. Moins vous avez besoin de propositions, plus vous débloquez de succès.",
     htp_lang_note: "Version française : la traduction est automatique. Certains noms et anecdotes peuvent contenir des approximations.",
+    htp_credits_h: 'Inspiré par',
+    htp_credits_p: 'Bugdle a été inspiré par',
     clade_info_title: 'Information sur le clade',
     clade_info_toggle_show: "Afficher l'information sur le clade",
     clade_info_toggle_hide: "Masquer l'information sur le clade",
@@ -2422,7 +2428,7 @@ function HintLegend() {
       </div>
       <div className="bd-legend-item">
         <span className="bd-legend-swatch" style={{ background: 'var(--yellow)' }}></span>
-        <span>{t('no_match')}</span>
+        <span>{t('close_match')}</span>
       </div>
       <div className="bd-legend-item">
         <span className="bd-legend-swatch" style={{ background: 'var(--red)' }}></span>
@@ -3209,8 +3215,21 @@ async function fetchWikipediaSummary(clade, lang) {
     return ENTOMO_KEYWORDS.some((kw) => lower.includes(kw));
   };
 
+  // Per-language blocklist of clades whose Wikipedia article is wrong/mismatched
+  // in that language (the title resolves to an unrelated or incorrect page). For
+  // these we force "no information available" rather than show misleading content.
+  // The clade is passed to tryFetch as `title`, so we match on title directly.
+  const WIKI_BLOCKLIST = {
+    fr: new Set(['Gomphus', 'Fulgora', 'Titanus', 'Blatta', 'Taraxippus', 'Oestrus',
+                 'Galleria', 'Cynthia', 'Tibicen', 'Manticora', 'Mantis', 'Saga']),
+    en: new Set(['Harmonia', 'Photinus', 'Oestrus', 'Saturnia', 'Cynthia', 'Tibicen',
+                 'Ephemera', 'Mantis']),
+  };
+
   const tryFetch = async (title, langCode) => {
     try {
+      // Skip blocklisted clades for this language entirely.
+      if (WIKI_BLOCKLIST[langCode] && WIKI_BLOCKLIST[langCode].has(title)) return null;
       const url = `https://${langCode}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
       const r = await fetch(url);
       if (!r.ok) return null;
@@ -4679,6 +4698,13 @@ function Bugdle() {
               <p>{t('htp_practice_p')}</p>
               <h3>{t('htp_explore_h')}</h3>
               <p>{t('htp_explore_p')}</p>
+              <h3>{t('htp_credits_h')}</h3>
+              <p>
+                {t('htp_credits_p')}{' '}
+                <a href="https://metazooa.com/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--copper)', textDecoration: 'underline' }}>Metazooa</a>
+                {' '}{lang === 'fr' ? 'et' : 'and'}{' '}
+                <a href="https://birdl.online/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--copper)', textDecoration: 'underline' }}>Birdle</a>.
+              </p>
               {lang === 'fr' && (
                 <p style={{
                   marginTop: 18,
