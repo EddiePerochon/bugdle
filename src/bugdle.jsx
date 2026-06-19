@@ -893,7 +893,7 @@ async function saveStore(key, value) {
 //
 // To enable: deploy the Worker (see WORKER_DEPLOY.md) and paste its URL below.
 // Leave it empty ('') to disable all cloud features gracefully.
-const CLOUD_WORKER_URL = 'wild-dream-59f2.petiteddiemathers.workers.dev';   // e.g. 'https://bugdle-sync.YOUR-SUBDOMAIN.workers.dev'
+const CLOUD_WORKER_URL = 'https://wild-dream-59f2.petiteddiemathers.workers.dev';   // e.g. 'https://bugdle-sync.YOUR-SUBDOMAIN.workers.dev'
 
 function syncEnabled() {
   return !!CLOUD_WORKER_URL;
