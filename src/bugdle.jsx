@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
-import { Volume2, VolumeX, Sparkles, GitBranch, Award, RotateCcw, Lightbulb, ChevronUp, ChevronDown, ChevronRight, X, Flag, Dumbbell, HelpCircle, Search, ArrowLeft, TreePine, Plus, Minus, Globe } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, GitBranch, Award, RotateCcw, Lightbulb, ChevronUp, ChevronDown, ChevronRight, X, Flag, Dumbbell, HelpCircle, Search, ArrowLeft, TreePine, Plus, Minus, Globe, Cloud, User, BarChart3 } from 'lucide-react';
 
 // ===== EMBEDDED DATA =====
 // 295 insect species (one per genus) with NCBI-style lineages, traits, fun facts.
@@ -111,6 +111,38 @@ const STRINGS = {
     explore_tree: 'Explore the tree of life — browse and learn',
     achievements: 'Achievements',
     how_to_play: 'How to play',
+    sync_button: 'Sync',
+    sync_title: 'Sync across devices',
+    sync_intro: 'Enter a nickname to sync your stats and badges across devices. No password, no account — anyone using the same nickname shares the same stats.',
+    sync_first_time: 'First time using this nickname? Your current stats on this device become its starting point.',
+    sync_existing: 'This nickname already exists. Its cloud stats will be loaded onto this device, replacing local progress.',
+    sync_placeholder: 'Your nickname',
+    sync_connect: 'Connect',
+    sync_disconnect: 'Disconnect',
+    sync_connected_as: 'Synced as {name}',
+    sync_syncing: 'Syncing…',
+    sync_synced: 'Synced ✓',
+    sync_error: 'Sync unavailable right now.',
+    sync_disabled: 'Cross-device sync is not configured for this site.',
+    sync_now: 'Sync now',
+    sync_clear_confirm: 'Disconnect this nickname? Your stats stay on this device but will no longer sync.',
+    mystats_button: 'My stats',
+    mystats_title: 'My statistics',
+    mystats_wins: 'Wins',
+    mystats_winrate: 'Win rate',
+    mystats_streak: 'Current streak',
+    mystats_beststreak: 'Best streak',
+    mystats_avg: 'Avg. attempts',
+    mystats_distribution: 'Attempt distribution',
+    mystats_local: 'Stats on this device',
+    mystats_synced_as: 'Synced as {name}',
+    mystats_empty: 'No games played yet — solve today\'s puzzle to start your stats!',
+    whatsnew_title: "What's new",
+    whatsnew_sync_h: 'Play across devices',
+    whatsnew_sync_p: 'You can now pick a nickname (no password) to sync your stats and badges between your phone, tablet and computer. Look for the cloud icon in the header.',
+    whatsnew_stats_h: 'Personal statistics',
+    whatsnew_stats_p: 'A new stats panel shows your wins, streaks, win rate, badges and more. Tap the chart icon in the header.',
+    whatsnew_cta: 'Got it',
     practice_toggle: 'Practice mode (random species, does not affect stats)',
     new_game: 'New game',
     give_up: 'Give up',
@@ -181,6 +213,10 @@ const STRINGS = {
     htp_practice_p: "Click the dumbbell icon to pull a random species at any time — practice rounds don't affect your statistics or your daily challenge. Use them as warm-up before tomorrow's puzzle.",
     htp_explore_h: 'Explore the tree',
     htp_explore_p: "Tap the tree icon in the header to open the tree of life explorer: a study and review mode where you can browse every species in the game by unfolding clades from Insecta downward. Use the search bar to jump to any clade or species — searching auto-expands the path to it and reveals its direct subclades. Click any species to see its photo, fact and full taxonomy.",
+    htp_stats_h: 'Your statistics',
+    htp_stats_p: 'Tap the chart icon in the header to open your personal stats: wins, losses, win rate, current and best streak, games played, badges earned, orders mastered, and biogeographic regions covered. These reflect this device by default, or your synced nickname if you connect one.',
+    htp_sync_h: 'Play across devices',
+    htp_sync_p: 'Tap the cloud icon to enter a nickname (no password, no account). Your stats and badges then follow you to any device where you enter the same nickname. The first time you use a nickname, this device\'s current stats become its starting point; afterwards everything syncs automatically after each win and on every page load.',
     htp_start_h: 'A good start',
     htp_start_p: 'Start with a species you know well. The fewer guesses you need, the more achievements you unlock.',
     htp_lang_note: '',
@@ -245,6 +281,38 @@ const STRINGS = {
     explore_tree: "Explorer l'arbre du vivant — parcourir et apprendre",
     achievements: 'Succès',
     how_to_play: 'Comment jouer',
+    sync_button: 'Sync',
+    sync_title: 'Synchroniser entre appareils',
+    sync_intro: "Entrez un pseudo pour synchroniser vos statistiques et badges entre vos appareils. Pas de mot de passe, pas de compte — toute personne utilisant le même pseudo partage les mêmes statistiques.",
+    sync_first_time: "Première utilisation de ce pseudo ? Vos statistiques actuelles sur cet appareil deviennent son point de départ.",
+    sync_existing: "Ce pseudo existe déjà. Ses statistiques du cloud seront chargées sur cet appareil, remplaçant la progression locale.",
+    sync_placeholder: 'Votre pseudo',
+    sync_connect: 'Connecter',
+    sync_disconnect: 'Déconnecter',
+    sync_connected_as: 'Synchronisé : {name}',
+    sync_syncing: 'Synchronisation…',
+    sync_synced: 'Synchronisé ✓',
+    sync_error: 'Synchronisation indisponible pour le moment.',
+    sync_disabled: "La synchronisation multi-appareils n'est pas configurée pour ce site.",
+    sync_now: 'Synchroniser maintenant',
+    sync_clear_confirm: 'Déconnecter ce pseudo ? Vos statistiques restent sur cet appareil mais ne seront plus synchronisées.',
+    mystats_button: 'Mes stats',
+    mystats_title: 'Mes statistiques',
+    mystats_wins: 'Parties gagnées',
+    mystats_winrate: 'Pourcentage gagné',
+    mystats_streak: 'Série actuelle',
+    mystats_beststreak: 'Meilleure série',
+    mystats_avg: 'Essais (moyenne)',
+    mystats_distribution: 'Répartition des essais',
+    mystats_local: 'Statistiques sur cet appareil',
+    mystats_synced_as: 'Synchronisé : {name}',
+    mystats_empty: "Aucune partie jouée — résolvez le défi du jour pour démarrer vos statistiques !",
+    whatsnew_title: 'Nouveautés',
+    whatsnew_sync_h: 'Jouer sur plusieurs appareils',
+    whatsnew_sync_p: "Vous pouvez désormais choisir un pseudo (sans mot de passe) pour synchroniser vos statistiques et badges entre votre téléphone, tablette et ordinateur. Cherchez l'icône nuage dans l'en-tête.",
+    whatsnew_stats_h: 'Statistiques personnelles',
+    whatsnew_stats_p: "Un nouveau panneau de stats affiche vos victoires, séries, taux de victoire, badges et plus encore. Touchez l'icône graphique dans l'en-tête.",
+    whatsnew_cta: "J'ai compris",
     practice_toggle: 'Mode entraînement (espèce aléatoire, ne compte pas dans les statistiques)',
     new_game: 'Nouvelle partie',
     give_up: 'Abandonner',
@@ -308,6 +376,10 @@ const STRINGS = {
     htp_practice_p: "Cliquez sur l'icône haltère pour tirer une espèce aléatoire à tout moment — les parties d'entraînement n'affectent ni vos statistiques ni votre défi du jour. Idéal pour s'échauffer avant le puzzle de demain.",
     htp_explore_h: "Explorer l'arbre",
     htp_explore_p: "Touchez l'icône arbre dans l'en-tête pour ouvrir l'explorateur de l'arbre du vivant : un mode étude et révision où vous pouvez parcourir toutes les espèces du jeu en dépliant les clades depuis Insecta. Utilisez la barre de recherche pour atteindre n'importe quel clade ou espèce — la recherche déplie automatiquement le chemin et révèle les sous-clades directs. Cliquez sur une espèce pour voir sa photo, son anecdote et sa taxonomie complète.",
+    htp_stats_h: 'Vos statistiques',
+    htp_stats_p: "Touchez l'icône graphique dans l'en-tête pour ouvrir vos statistiques personnelles : victoires, défaites, taux de victoire, série actuelle et meilleure série, parties jouées, badges obtenus, ordres maîtrisés et régions biogéographiques couvertes. Elles reflètent cet appareil par défaut, ou votre pseudo synchronisé si vous en connectez un.",
+    htp_sync_h: 'Jouer sur plusieurs appareils',
+    htp_sync_p: "Touchez l'icône nuage pour entrer un pseudo (sans mot de passe, sans compte). Vos statistiques et badges vous suivent alors sur tout appareil où vous entrez le même pseudo. La première fois que vous utilisez un pseudo, les statistiques actuelles de cet appareil en deviennent le point de départ ; ensuite tout se synchronise automatiquement après chaque victoire et à chaque chargement de la page.",
     htp_start_h: 'Un bon départ',
     htp_start_p: "Commencez par une espèce que vous connaissez bien. Moins vous avez besoin de propositions, plus vous débloquez de succès.",
     htp_lang_note: "Version française : la traduction est automatique. Certains noms et anecdotes peuvent contenir des approximations.",
@@ -807,6 +879,100 @@ async function saveStore(key, value) {
   return saved;
 }
 
+// ===== CLOUD SYNC (optional, via a Cloudflare Worker proxy) =====
+// Lets a player type a nickname (no password, no account) and sync their stats &
+// badges across devices, plus power the community counter — WITHOUT ever exposing
+// any database credentials in the client.
+//
+// The browser talks ONLY to your Cloudflare Worker, which holds the Upstash token
+// server-side and exposes just four safe operations:
+//   GET  ?op=get-stats&nick=NAME            → returns that nickname's stats JSON
+//   POST ?op=set-stats&nick=NAME  (body=JSON) → overwrites that nickname's stats
+//   GET  ?op=community&date=YYYY-MM-DD       → returns { wins, total }
+//   POST ?op=community-win&date=YYYY-MM-DD&guesses=N → increments the day's counters
+//
+// To enable: deploy the Worker (see WORKER_DEPLOY.md) and paste its URL below.
+// Leave it empty ('') to disable all cloud features gracefully.
+const CLOUD_WORKER_URL = 'wild-dream-59f2.petiteddiemathers.workers.dev';   // e.g. 'https://bugdle-sync.YOUR-SUBDOMAIN.workers.dev'
+
+function syncEnabled() {
+  return !!CLOUD_WORKER_URL;
+}
+
+function normalizeNick(nick) {
+  return (nick || '').trim().toLowerCase().replace(/\s+/g, '_').slice(0, 40);
+}
+
+// Low-level call to the Worker. Returns the parsed JSON body, or null on failure.
+async function cloudCall(op, params, body) {
+  if (!syncEnabled()) return null;
+  try {
+    const qs = new URLSearchParams({ op, ...(params || {}) }).toString();
+    const url = `${CLOUD_WORKER_URL}?${qs}`;
+    const opts = { method: body !== undefined ? 'POST' : 'GET' };
+    if (body !== undefined) {
+      opts.body = body;
+      opts.headers = { 'Content-Type': 'application/json' };
+    }
+    const r = await fetch(url, opts);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch (e) { return null; }
+}
+
+// Fetch the cloud stats object for a nickname, or null if none exists yet.
+async function pullCloudStats(nick) {
+  const res = await cloudCall('get-stats', { nick: normalizeNick(nick) });
+  if (!res || res.stats == null) return null;
+  // Worker returns { stats: <object|null> }
+  return typeof res.stats === 'string' ? safeParse(res.stats) : res.stats;
+}
+
+function safeParse(s) { try { return JSON.parse(s); } catch (e) { return null; } }
+
+// Push a stats object to the cloud under the nickname (overwrites).
+async function pushCloudStats(nick, stats) {
+  if (!syncEnabled()) return false;
+  const res = await cloudCall('set-stats', { nick: normalizeNick(nick) }, JSON.stringify(stats));
+  return !!(res && res.ok);
+}
+
+// ===== COMMUNITY COUNTER (same Worker) =====
+// Tracks, per daily puzzle, how many players solved it and the average guess count.
+
+async function fetchCommunityStats(dateKey) {
+  if (!syncEnabled()) return null;
+  const res = await cloudCall('community', { date: dateKey });
+  if (!res) return null;
+  const w = parseInt(res.wins, 10) || 0;
+  const t = parseInt(res.total, 10) || 0;
+  return { wins: w, avgGuesses: w > 0 ? Math.round((t / w) * 10) / 10 : null };
+}
+
+// Submit a solved puzzle. Guards against double-counting via a localStorage flag
+// so refreshing or replaying the same day doesn't inflate the counter.
+async function submitCommunityWin(dateKey, guessCount) {
+  if (!syncEnabled()) return;
+  const storageKey = `bugdle:submitted:${dateKey}`;
+  try { if (localStorage.getItem(storageKey)) return; } catch (e) {}
+  await cloudCall('community-win', { date: dateKey, guesses: String(guessCount) }, '');
+  try { localStorage.setItem(storageKey, '1'); } catch (e) {}
+}
+
+// Hook: fetch + periodically refresh the community stats for a given date.
+function useCommunityStats(dateKey) {
+  const [stats, setStats] = useState(null);
+  useEffect(() => {
+    if (!syncEnabled() || !dateKey) return;
+    let cancelled = false;
+    const load = () => fetchCommunityStats(dateKey).then((s) => { if (!cancelled) setStats(s); });
+    load();
+    const id = setInterval(load, 5 * 60 * 1000); // refresh every 5 min
+    return () => { cancelled = true; clearInterval(id); };
+  }, [dateKey]);
+  return stats;
+}
+
 // ===== DAILY CHALLENGE =====
 // The puzzle of the day is the same for everyone using the game on a given UTC date.
 // We derive a deterministic species index from the date string YYYY-MM-DD via a small
@@ -1079,6 +1245,127 @@ const STYLES = `
   box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
 }
 .bd-icon-btn:hover { background: var(--cream-deep); }
+.bd-icon-btn.bd-sync-active { background: var(--green-light); border-color: var(--green-dark); color: var(--ink); }
+.bd-icon-btn.bd-sync-active:hover { background: var(--green-dark); color: #fff; }
+.bd-sync-modal { max-width: 460px; }
+.bd-sync-connected {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Fraunces', serif; font-size: 15px; color: var(--ink);
+  padding: 12px 14px; background: var(--cream-deep); border-radius: 10px;
+  margin-bottom: 14px; flex-wrap: wrap;
+}
+.bd-sync-badge {
+  font-size: 11px; font-style: italic; color: var(--sepia);
+  padding: 2px 8px; border-radius: 10px; background: var(--paper);
+  border: 1px solid var(--line);
+}
+.bd-sync-badge.ok { color: var(--green-dark); border-color: var(--green-dark); }
+.bd-sync-badge.err { color: var(--red); border-color: var(--red); }
+.bd-sync-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.bd-sync-input-row { display: flex; gap: 8px; align-items: stretch; }
+.bd-sync-input {
+  flex: 1; padding: 10px 12px; font-size: 14px;
+  font-family: 'Fraunces', serif; color: var(--ink);
+  background: var(--paper); border: 1px solid var(--line-strong);
+  border-radius: 8px; outline: none;
+}
+.bd-sync-input:focus { border-color: var(--ochre); }
+.bd-stats-modal { max-width: 480px; }
+.bd-stats-scope {
+  font-family: 'Fraunces', serif; font-size: 12.5px; font-style: italic;
+  color: var(--sepia); margin-bottom: 16px;
+}
+.bd-stats-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.bd-stats-cell {
+  background: var(--cream-deep); border: 1px solid var(--line);
+  border-radius: 10px; padding: 14px 8px; text-align: center;
+}
+.bd-stats-cell-icon { font-size: 18px; margin-bottom: 4px; }
+.bd-stats-cell-value {
+  font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px;
+  color: var(--ink); line-height: 1.1;
+}
+.bd-stats-cell-label {
+  font-family: 'Fraunces', serif; font-size: 11px; color: var(--sepia);
+  margin-top: 4px; line-height: 1.2;
+}
+@media (max-width: 480px) {
+  .bd-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+/* 5 headline stats: lay out as a flexible row that wraps nicely. */
+.bd-stats-grid-5 { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 560px) {
+  .bd-stats-grid-5 { grid-template-columns: repeat(3, 1fr); }
+}
+/* Attempt-distribution bar chart */
+.bd-dist { margin-top: 20px; }
+.bd-dist-title {
+  font-family: 'Fraunces', serif; font-weight: 600; font-size: 13px;
+  color: var(--sepia-dark); margin-bottom: 12px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.bd-dist-chart {
+  display: flex; align-items: flex-end; gap: 6px;
+  height: 130px; padding-top: 14px;
+}
+.bd-dist-col {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  height: 100%; justify-content: flex-end; gap: 6px;
+}
+.bd-dist-bar-wrap {
+  width: 100%; height: 100%;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.bd-dist-bar {
+  width: 80%; min-height: 2px;
+  background: linear-gradient(to top, var(--ochre), var(--copper));
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  display: flex; align-items: flex-start; justify-content: center;
+  transition: height 0.3s ease;
+}
+.bd-dist-count {
+  position: absolute; top: -16px;
+  font-family: 'Fraunces', serif; font-size: 11px; font-weight: 700;
+  color: var(--sepia-dark);
+}
+.bd-dist-label {
+  font-family: 'Fraunces', serif; font-size: 10px; color: var(--sepia);
+  white-space: nowrap;
+}
+.bd-whatsnew-modal { max-width: 440px; }
+.bd-whatsnew-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'Fraunces', serif; font-weight: 700; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--copper); background: var(--cream-deep);
+  padding: 4px 10px; border-radius: 20px; margin-bottom: 16px;
+}
+.bd-whatsnew-item {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 12px 0; border-bottom: 1px dashed var(--line);
+}
+.bd-whatsnew-item:last-of-type { border-bottom: none; }
+.bd-whatsnew-icon {
+  flex-shrink: 0; width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--cream-deep); border: 1px solid var(--line);
+  border-radius: 12px; color: var(--copper);
+}
+.bd-whatsnew-item h3 {
+  font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px;
+  color: var(--ink); margin: 2px 0 4px;
+}
+.bd-whatsnew-item p {
+  font-family: 'Fraunces', serif; font-size: 13.5px; line-height: 1.45;
+  color: var(--sepia-dark); margin: 0;
+}
+.bd-whatsnew-cta {
+  width: 100%; justify-content: center; margin-top: 18px;
+  padding: 11px 18px; font-size: 15px;
+}
 /* Language toggle: shows "EN" or "FR" in monospace-like style */
 .bd-lang-btn .bd-lang-code {
   font-family: 'Fraunces', serif;
@@ -1103,6 +1390,8 @@ const STYLES = `
 .bd-stats span { display: inline-flex; align-items: center; gap: 4px; }
 .bd-stats strong { font-weight: 700; color: var(--ink); }
 .bd-stats .sep { color: var(--line-strong); }
+.bd-community-stat { display: inline-flex; align-items: center; gap: 4px; cursor: default; }
+.bd-community-avg { font-size: 11px; color: var(--sepia); font-weight: 500; letter-spacing: 0.02em; }
 
 /* === Main layout === */
 .bd-main {
@@ -3966,6 +4255,209 @@ function Explorer({ onBack }) {
 }
 
 
+// ===== WHAT'S NEW MODAL (temporary announcement) =====
+// Shown to each user for a limited window after they first load the updated site,
+// then dismissed permanently (per user). Two ways to bound the window:
+//   - WHATS_NEW_DAYS: how many days after a user's FIRST sighting to keep offering
+//     it (per-device, robust to whenever you actually deploy).
+//   - WHATS_NEW_HARD_EXPIRY: an absolute backstop date after which it never shows
+//     for anyone (so you can leave the code in and forget it).
+// Bump WHATS_NEW_ID to broadcast a brand-new announcement later.
+const WHATS_NEW_ID = 'sync_and_stats_2026_06';   // change this for a new announcement
+const WHATS_NEW_DAYS = 5;                          // show for 5 days after first sight
+const WHATS_NEW_HARD_EXPIRY = '2026-12-31';        // absolute backstop (YYYY-MM-DD UTC)
+
+function WhatsNewModal({ onClose }) {
+  const { t } = useLang();
+  return (
+    <div className="bd-modal-overlay" onClick={onClose}>
+      <div className="bd-modal bd-whatsnew-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="bd-modal-close" onClick={onClose}><X size={18} /></button>
+        <div className="bd-whatsnew-badge"><Sparkles size={13} /> {t('whatsnew_title')}</div>
+        <div className="bd-whatsnew-item">
+          <div className="bd-whatsnew-icon"><Cloud size={22} /></div>
+          <div>
+            <h3>{t('whatsnew_sync_h')}</h3>
+            <p>{t('whatsnew_sync_p')}</p>
+          </div>
+        </div>
+        <div className="bd-whatsnew-item">
+          <div className="bd-whatsnew-icon"><BarChart3 size={22} /></div>
+          <div>
+            <h3>{t('whatsnew_stats_h')}</h3>
+            <p>{t('whatsnew_stats_p')}</p>
+          </div>
+        </div>
+        <button className="bd-btn accent bd-whatsnew-cta" onClick={onClose}>{t('whatsnew_cta')}</button>
+      </div>
+    </div>
+  );
+}
+
+// ===== PERSONAL STATS MODAL =====
+function PersonalStatsModal({ stats, nickname, onClose }) {
+  const { t, lang } = useLang();
+  const wins = stats.wins || 0;
+  const played = wins + (stats.losses || 0);
+  const winRate = played > 0 ? Math.round((wins / played) * 100) : 0;
+  // Average uses winsCounted (only wins recorded since guess-tracking was added),
+  // NOT total wins — otherwise pre-update wins inflate the denominator and skew the
+  // average downward.
+  const counted = stats.winsCounted || 0;
+  const avgGuesses = counted > 0 ? Math.round(((stats.totalGuesses || 0) / counted) * 10) / 10 : null;
+
+  // Five headline stats requested: wins, win %, current streak, best streak, avg attempts.
+  const cells = [
+    { label: t('mystats_wins'), value: wins, icon: '🏆' },
+    { label: t('mystats_winrate'), value: played > 0 ? `${winRate}%` : '—', icon: '％' },
+    { label: t('mystats_streak'), value: stats.streak || 0, icon: '🔥' },
+    { label: t('mystats_beststreak'), value: stats.bestStreak || 0, icon: '⭐' },
+    { label: t('mystats_avg'), value: avgGuesses != null ? avgGuesses : '—', icon: '🎯' },
+  ];
+
+  // Build the distribution in blocks of 2 attempts: 1-2, 3-4, ... up to MAX_ATTEMPTS.
+  // Each histogram key is the effective attempt count at which a win happened.
+  const hist = stats.guessHistogram || {};
+  const buckets = [];
+  for (let lo = 1; lo <= MAX_ATTEMPTS; lo += 2) {
+    const hi = lo + 1;
+    let count = 0;
+    for (let n = lo; n <= hi; n++) count += hist[String(n)] || 0;
+    buckets.push({ label: `${lo}\u2013${hi}`, count });
+  }
+  const maxCount = Math.max(1, ...buckets.map((b) => b.count));
+
+  return (
+    <div className="bd-modal-overlay" onClick={onClose}>
+      <div className="bd-modal bd-stats-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="bd-modal-close" onClick={onClose}><X size={18} /></button>
+        <h2><BarChart3 size={18} style={{ verticalAlign: -3, marginRight: 6 }} />{t('mystats_title')}</h2>
+        <div className="bd-stats-scope">
+          {nickname
+            ? <><Cloud size={13} style={{ verticalAlign: -2, marginRight: 4 }} />{t('mystats_synced_as', { name: nickname })}</>
+            : <><User size={13} style={{ verticalAlign: -2, marginRight: 4 }} />{t('mystats_local')}</>}
+        </div>
+        {played === 0 ? (
+          <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', color: 'var(--sepia)', fontSize: 14, marginTop: 8 }}>
+            {t('mystats_empty')}
+          </p>
+        ) : (
+          <>
+            <div className="bd-stats-grid bd-stats-grid-5">
+              {cells.map((c, i) => (
+                <div key={i} className="bd-stats-cell">
+                  <div className="bd-stats-cell-icon">{c.icon}</div>
+                  <div className="bd-stats-cell-value">{c.value}</div>
+                  <div className="bd-stats-cell-label">{c.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {counted > 0 && (
+              <div className="bd-dist">
+                <div className="bd-dist-title">{t('mystats_distribution')}</div>
+                <div className="bd-dist-chart">
+                  {buckets.map((b, i) => (
+                    <div key={i} className="bd-dist-col">
+                      <div className="bd-dist-bar-wrap">
+                        <div
+                          className="bd-dist-bar"
+                          style={{ height: `${b.count === 0 ? 2 : Math.round((b.count / maxCount) * 100)}%` }}
+                          title={`${b.label}: ${b.count}`}
+                        >
+                          {b.count > 0 && <span className="bd-dist-count">{b.count}</span>}
+                        </div>
+                      </div>
+                      <div className="bd-dist-label">{b.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ===== SYNC MODAL =====
+function SyncModal({ nickname, syncStatus, onConnect, onDisconnect, onSyncNow, onClose }) {
+  const { t } = useLang();
+  const [draft, setDraft] = useState(nickname || '');
+  const busy = syncStatus === 'syncing';
+
+  return (
+    <div className="bd-modal-overlay" onClick={onClose}>
+      <div className="bd-modal bd-sync-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="bd-modal-close" onClick={onClose}><X size={18} /></button>
+        <h2><Cloud size={18} style={{ verticalAlign: -3, marginRight: 6 }} />{t('sync_title')}</h2>
+
+        {!syncEnabled() ? (
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 14, color: 'var(--sepia-dark)' }}>
+            {t('sync_disabled')}
+          </p>
+        ) : nickname ? (
+          // Connected state
+          <div>
+            <div className="bd-sync-connected">
+              <User size={16} />
+              <span>{t('sync_connected_as', { name: nickname })}</span>
+              {syncStatus === 'synced' && <span className="bd-sync-badge ok">{t('sync_synced')}</span>}
+              {syncStatus === 'syncing' && <span className="bd-sync-badge">{t('sync_syncing')}</span>}
+              {syncStatus === 'error' && <span className="bd-sync-badge err">{t('sync_error')}</span>}
+            </div>
+            <div className="bd-sync-actions">
+              <button className="bd-btn" onClick={onSyncNow} disabled={busy}>
+                <RotateCcw size={14} /> {t('sync_now')}
+              </button>
+              <button
+                className="bd-btn"
+                onClick={() => { if (confirm(t('sync_clear_confirm'))) onDisconnect(); }}
+              >
+                {t('sync_disconnect')}
+              </button>
+            </div>
+          </div>
+        ) : (
+          // Not connected — enter a nickname
+          <div>
+            <p style={{ fontFamily: 'Fraunces, serif', fontSize: 13.5, lineHeight: 1.5, color: 'var(--sepia-dark)', marginBottom: 8 }}>
+              {t('sync_intro')}
+            </p>
+            <p style={{ fontFamily: 'Fraunces, serif', fontSize: 12.5, fontStyle: 'italic', color: 'var(--sepia)', marginBottom: 14 }}>
+              {t('sync_first_time')}
+            </p>
+            <div className="bd-sync-input-row">
+              <input
+                className="bd-sync-input"
+                type="text"
+                value={draft}
+                maxLength={40}
+                placeholder={t('sync_placeholder')}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) onConnect(draft); }}
+                autoFocus
+              />
+              <button
+                className="bd-btn accent"
+                onClick={() => onConnect(draft)}
+                disabled={!draft.trim() || busy}
+              >
+                {busy ? t('sync_syncing') : t('sync_connect')}
+              </button>
+            </div>
+            {syncStatus === 'error' && (
+              <div className="bd-sync-badge err" style={{ marginTop: 10 }}>{t('sync_error')}</div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
 // ===== MAIN GAME =====
 function Bugdle() {
   const { lang, setLang, t } = useLang();
@@ -4012,6 +4504,9 @@ function Bugdle() {
     losses: 0,
     streak: 0,
     bestStreak: 0,
+    totalGuesses: 0,          // cumulative guesses (incl. hint/fact costs) across wins
+    winsCounted: 0,            // number of wins that contributed to totalGuesses (for average)
+    guessHistogram: {},        // map of guessCount → number of wins at that count
     achievements: [],
     achievementProgress: {
       pollinatorGenera: [],
@@ -4021,6 +4516,12 @@ function Bugdle() {
     },
   });
   const [statsLoaded, setStatsLoaded] = useState(false);
+  // Cloud sync: nickname (persisted) + transient sync status for the UI.
+  const [nickname, setNickname] = useState(null);
+  const [syncStatus, setSyncStatus] = useState('idle'); // idle | syncing | synced | error
+  const [showSync, setShowSync] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  const [showWhatsNew, setShowWhatsNew] = useState(false);
 
   const sounds = useSounds(soundOn);
 
@@ -4034,17 +4535,88 @@ function Bugdle() {
       }));
       const so = await loadStore('bugdle_sound', false);
       setSoundOn(so);
+
+      // Cloud sync: if a nickname was saved, adopt the cloud stats for this device
+      // (cloud is the source of truth on load, per the sync design).
+      const savedNick = await loadStore('bugdle_nickname', null);
+      if (savedNick) {
+        setNickname(savedNick);
+        if (syncEnabled()) {
+          setSyncStatus('syncing');
+          const cloud = await pullCloudStats(savedNick);
+          if (cloud) {
+            setStats((prev) => ({
+              ...prev, ...cloud,
+              achievementProgress: { ...prev.achievementProgress, ...(cloud.achievementProgress || {}) }
+            }));
+            setSyncStatus('synced');
+          } else {
+            // No cloud record yet (e.g. created offline) — push what we have.
+            setSyncStatus('idle');
+          }
+        }
+      }
       setStatsLoaded(true);
     })();
+  }, []);
+
+  // Show the "what's new" announcement for a limited window. The window starts the
+  // first time THIS device sees the new version (stored as a date), runs for
+  // WHATS_NEW_DAYS, and is also capped by an absolute backstop date. Once the user
+  // dismisses it, it never shows again on this device.
+  useEffect(() => {
+    try {
+      const today = utcDateKey(); // 'YYYY-MM-DD'
+      if (today > WHATS_NEW_HARD_EXPIRY) return; // absolute backstop reached
+      const dismissed = localStorage.getItem(`bugdle:whatsnew:${WHATS_NEW_ID}:done`);
+      if (dismissed) return;
+      // Record first-sight date if not already set
+      const firstKey = `bugdle:whatsnew:${WHATS_NEW_ID}:first`;
+      let firstSeen = localStorage.getItem(firstKey);
+      if (!firstSeen) {
+        firstSeen = today;
+        localStorage.setItem(firstKey, firstSeen);
+      }
+      // Compute window end = firstSeen + WHATS_NEW_DAYS
+      const end = new Date(firstSeen + 'T00:00:00Z');
+      end.setUTCDate(end.getUTCDate() + WHATS_NEW_DAYS);
+      const endKey = utcDateKey(end);
+      if (today <= endKey) setShowWhatsNew(true);
+    } catch (e) { /* localStorage unavailable — just skip */ }
+  }, []);
+
+  const dismissWhatsNew = useCallback(() => {
+    setShowWhatsNew(false);
+    try { localStorage.setItem(`bugdle:whatsnew:${WHATS_NEW_ID}:done`, '1'); } catch (e) {}
   }, []);
 
   // Save stats
   useEffect(() => { if (statsLoaded) saveStore('bugdle_stats', stats); }, [stats, statsLoaded]);
   useEffect(() => { if (statsLoaded) saveStore('bugdle_sound', soundOn); }, [soundOn, statsLoaded]);
 
+  // Push stats to the cloud whenever they change and a nickname is connected.
+  // This covers wins, losses, and achievement unlocks automatically. We skip the
+  // very first run (statsLoaded guard) so loading cloud stats doesn't immediately
+  // echo them back.
+  const didInitialSyncPush = useRef(false);
+  useEffect(() => {
+    if (!statsLoaded || !nickname || !syncEnabled()) return;
+    // Skip the first effect run right after connecting/loading to avoid a redundant
+    // round-trip; subsequent stat changes push normally.
+    if (!didInitialSyncPush.current) { didInitialSyncPush.current = true; return; }
+    let cancelled = false;
+    setSyncStatus('syncing');
+    pushCloudStats(nickname, stats).then((ok) => {
+      if (cancelled) return;
+      setSyncStatus(ok ? 'synced' : 'error');
+    });
+    return () => { cancelled = true; };
+  }, [stats, nickname, statsLoaded]);
+
   // Today's UTC date key — recomputed each render so we naturally pick up day rollover
   // if the user keeps the tab open across midnight UTC.
   const todayKey = utcDateKey();
+  const communityStats = useCommunityStats(todayKey);
 
   // Start a new game.
   //   training=true  → random species, no persistence, doesn't count toward stats.
@@ -4180,7 +4752,9 @@ function Bugdle() {
       setTimeout(() => setShowEnd(true), 1500);
       sounds.success();
       if (!trainingMode) {
-        updateStatsOnWin(newGuesses.length, target);
+        updateStatsOnWin(newGuesses.length, target, newGuesses.length + extraCost);
+        // Community counter (fire-and-forget; silent if Upstash not configured)
+        submitCommunityWin(todayKey, newGuesses.length + extraCost);
       }
     } else if (newGuesses.length + extraCost >= MAX_ATTEMPTS) {
       setGameOver(true);
@@ -4192,7 +4766,62 @@ function Bugdle() {
     setActiveGuessId(selectedSpecies.id);
   };
 
-  const updateStatsOnWin = (numGuesses, won_target) => {
+  // ----- Cloud sync handlers -----
+  // Connect a nickname. If the nickname has no cloud record yet, this device's
+  // current stats become its starting point (push). If it already exists, adopt
+  // the cloud stats (pull, overwriting local).
+  const connectNickname = useCallback(async (rawNick) => {
+    const nick = (rawNick || '').trim();
+    if (!nick) return;
+    if (!syncEnabled()) { setSyncStatus('error'); return; }
+    setSyncStatus('syncing');
+    const cloud = await pullCloudStats(nick);
+    if (cloud) {
+      // Existing nickname → adopt cloud stats.
+      setStats((prev) => ({
+        ...prev, ...cloud,
+        achievementProgress: { ...prev.achievementProgress, ...(cloud.achievementProgress || {}) },
+      }));
+    } else {
+      // New nickname → seed the cloud with this device's current stats.
+      await pushCloudStats(nick, stats);
+    }
+    didInitialSyncPush.current = true; // avoid an immediate echo push
+    setNickname(nick);
+    saveStore('bugdle_nickname', nick);
+    setSyncStatus('synced');
+    setShowSync(false);
+  }, [stats]);
+
+  const disconnectNickname = useCallback(() => {
+    setNickname(null);
+    saveStore('bugdle_nickname', null);
+    try { localStorage.removeItem('bugdle_nickname'); } catch (e) {}
+    didInitialSyncPush.current = false;
+    setSyncStatus('idle');
+  }, []);
+
+  // Manual "sync now": pull from cloud, merge-by-adopting (cloud wins), then the
+  // change-effect will push back any local-only deltas on the next tick.
+  const syncNow = useCallback(async () => {
+    if (!nickname || !syncEnabled()) return;
+    setSyncStatus('syncing');
+    const cloud = await pullCloudStats(nickname);
+    if (cloud) {
+      setStats((prev) => ({
+        ...prev, ...cloud,
+        achievementProgress: { ...prev.achievementProgress, ...(cloud.achievementProgress || {}) },
+      }));
+    }
+    setSyncStatus('synced');
+  }, [nickname]);
+
+  const updateStatsOnWin = (numGuesses, won_target, totalCost) => {
+    // totalCost = guesses actually made + hint/fact costs (extraCost). This is the
+    // "effective attempt number" the player reached. Endurance and the guess
+    // distribution use this so that winning on the 20th *effective* attempt (e.g.
+    // 15 guesses + 5 spent on hints) still counts.
+    const effectiveAttempts = (typeof totalCost === 'number') ? totalCost : numGuesses;
     setStats((prev) => {
       const newStreak = prev.streak + 1;
       const newWins = prev.wins + 1;
@@ -4207,7 +4836,9 @@ function Bugdle() {
 
       ach.add('first_find');
       if (numGuesses <= 3) ach.add('sharpshooter');
-      if (numGuesses === MAX_ATTEMPTS) ach.add('endurance');
+      // Endurance: win at the 20th effective attempt — counting hints/facts toward
+      // the total, and also covering the edge case of going right up to the cap.
+      if (effectiveAttempts >= MAX_ATTEMPTS) ach.add('endurance');
 
       const order = won_target.lineage.find((p) => p[0] === 'Order');
       const superfam = won_target.lineage.find((p) => p[0] === 'Superfamily');
@@ -4252,11 +4883,19 @@ function Bugdle() {
         setTimeout(() => setToast({ message: t('achievement_unlocked', { name: locName }), icon: first.icon }), 1800);
       }
 
+      // Record the effective attempt count for averages and the distribution chart.
+      const newHist = { ...(prev.guessHistogram || {}) };
+      const bucket = String(effectiveAttempts);
+      newHist[bucket] = (newHist[bucket] || 0) + 1;
+
       return {
         ...prev,
         wins: newWins,
         streak: newStreak,
         bestStreak: Math.max(prev.bestStreak, newStreak),
+        totalGuesses: (prev.totalGuesses || 0) + effectiveAttempts,
+        winsCounted: (prev.winsCounted || 0) + 1,
+        guessHistogram: newHist,
         achievements: [...ach],
         achievementProgress: {
           ...prog,
@@ -4404,6 +5043,20 @@ function Bugdle() {
               <span>🔥 <strong>{stats.streak}</strong></span>
               <span className="sep">·</span>
               <span title={lang === 'fr' ? 'Essais restants' : 'Attempts left'}>📜 <strong>{remaining}</strong></span>
+              {communityStats && communityStats.wins > 0 && (
+                <>
+                  <span className="sep">·</span>
+                  <span
+                    className="bd-community-stat"
+                    title={lang === 'fr'
+                      ? `${communityStats.wins} joueur${communityStats.wins > 1 ? 's ont' : ' a'} trouvé aujourd'hui${communityStats.avgGuesses ? ` · moyenne : ${communityStats.avgGuesses} essais` : ''}`
+                      : `${communityStats.wins} player${communityStats.wins > 1 ? 's' : ''} solved today${communityStats.avgGuesses ? ` · avg: ${communityStats.avgGuesses} guesses` : ''}`}
+                  >
+                    👥 <strong>{communityStats.wins}</strong>
+                    {communityStats.avgGuesses && <span className="bd-community-avg"> ∅{communityStats.avgGuesses}</span>}
+                  </span>
+                </>
+              )}
             </div>
             <button
               className={'bd-icon-btn'}
@@ -4428,6 +5081,16 @@ function Bugdle() {
               <span className="bd-lang-code">{lang === 'en' ? 'EN' : 'FR'}</span>
             </button>
             <button className="bd-icon-btn" onClick={() => setShowExplorer(true)} title={t('explore_tree')}><TreePine size={16} /></button>
+            {syncEnabled() && (
+              <button
+                className={'bd-icon-btn' + (nickname ? ' bd-sync-active' : '')}
+                onClick={() => setShowSync(true)}
+                title={nickname ? t('sync_connected_as', { name: nickname }) : t('sync_title')}
+              >
+                <Cloud size={16} />
+              </button>
+            )}
+            <button className="bd-icon-btn" onClick={() => setShowStats(true)} title={t('mystats_title')}><BarChart3 size={16} /></button>
             <button className="bd-icon-btn" onClick={() => setShowAch(true)} title={t('achievements')}><Award size={16} /></button>
             <button className="bd-icon-btn" onClick={() => setShowHelp(true)} title={t('how_to_play')}><HelpCircle size={16} /></button>
           </div>
@@ -4698,6 +5361,10 @@ function Bugdle() {
               <p>{t('htp_practice_p')}</p>
               <h3>{t('htp_explore_h')}</h3>
               <p>{t('htp_explore_p')}</p>
+              <h3>{t('htp_stats_h')}</h3>
+              <p>{t('htp_stats_p')}</p>
+              <h3>{t('htp_sync_h')}</h3>
+              <p>{t('htp_sync_p')}</p>
               <h3>{t('htp_credits_h')}</h3>
               <p>
                 {t('htp_credits_p')}{' '}
@@ -4722,6 +5389,29 @@ function Bugdle() {
             </div>
           </div>
         </div>
+      )}
+
+      {showWhatsNew && (
+        <WhatsNewModal onClose={dismissWhatsNew} />
+      )}
+
+      {showStats && (
+        <PersonalStatsModal
+          stats={stats}
+          nickname={nickname}
+          onClose={() => setShowStats(false)}
+        />
+      )}
+
+      {showSync && (
+        <SyncModal
+          nickname={nickname}
+          syncStatus={syncStatus}
+          onConnect={connectNickname}
+          onDisconnect={disconnectNickname}
+          onSyncNow={syncNow}
+          onClose={() => setShowSync(false)}
+        />
       )}
 
       {showAch && (
